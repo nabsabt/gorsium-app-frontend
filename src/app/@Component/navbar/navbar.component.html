@@ -1,0 +1,117 @@
+<nav class="navbar navbar-expand-md fixed-top">
+  <div class="container-fluid">
+    <button
+      class="navbar-toggler mx-auto"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div
+      #navbarSupportedContent
+      class="collapse navbar-collapse"
+      id="navbarSupportedContent"
+    >
+      <div class="navbar-inner-content">
+        <!--Logo-->
+        <div
+          class="logo-container txt-primary-green d-flex justify-content-center align-items-center"
+        >
+          <a
+            class="navbar-brand"
+            [routerLink]="['home']"
+            (click)="collapseNavbar()"
+          >
+            <img
+              src="assets/logo/logo_raw.png"
+              alt="Logo"
+              class="logo-image img-fluid"
+            />
+          </a>
+          <p class="txt-lg txt-font-medium m-0">
+            Gorsium App
+            <!-- <button class="button-primary" (click)="changeLanguage()">
+              <p class="txt-md txt-primary-green p-0 m-0">
+                {{ changeToLangValue }}
+              </p>
+            </button> -->
+          </p>
+        </div>
+        <!--Links-->
+        <hr class="txt-primary-dark" />
+        <div>
+          <ul class="navbar-nav navbar-links mb-lg-0">
+            <!--About-->
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                aria-current="page"
+                [routerLink]="['home']"
+                fragment="about"
+                (click)="collapseNavbar()"
+              >
+                <button mat-raised-button>
+                  <p class="nav-link-name txt-md txt-primary-dark p-0 m-0">
+                    <!-- {{ "INTRODUCTION_BUTTON" | translate }} -->
+                    Rólunk
+                  </p>
+                </button>
+              </a>
+            </li>
+
+            <!--Events-->
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                [routerLink]="['home']"
+                fragment="events"
+                (click)="collapseNavbar()"
+                ><button mat-raised-button>
+                  <p class="nav-link-name txt-md txt-primary-dark p-0 m-0">
+                    <!--  {{ "REFERENCES_BUTTON" | translate }} -->
+                    Események
+                  </p>
+                </button></a
+              >
+            </li>
+
+            <!--Contact-->
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                [routerLink]="['home']"
+                fragment="contact"
+                (click)="collapseNavbar()"
+                ><button mat-raised-button>
+                  <p class="nav-link-name txt-md txt-primary-dark p-0 m-0">
+                    <!--  {{ "REFERENCES_BUTTON" | translate }} -->
+                    Kapcsolat
+                  </p>
+                </button></a
+              >
+            </li>
+
+            <!--Map-->
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                [routerLink]="['map']"
+                (click)="collapseNavbar()"
+                ><button mat-raised-button>
+                  <p class="nav-link-name txt-md txt-primary-dark p-0 m-0">
+                    <!--  {{ "PRICING_BUTTON" | translate }} -->
+                    Térkép
+                  </p>
+                </button></a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

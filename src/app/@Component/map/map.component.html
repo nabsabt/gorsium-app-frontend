@@ -1,0 +1,76 @@
+<div class="map" id="map">
+  <!--Desktop controls-->
+  <div
+    #desktopControlsContainer
+    id="desktopControlsContainer"
+    class="desktop-controls-container bg-primary-light p-2"
+  >
+    <!--Zones-->
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title> Zónák</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p><mat-slide-toggle>Régészeti zóna</mat-slide-toggle></p>
+        <p><mat-slide-toggle> Park zóna</mat-slide-toggle></p>
+      </mat-card-content>
+    </mat-card>
+    <!--Century-->
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title> Évszázad</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p><mat-slide-toggle>I. század</mat-slide-toggle></p>
+        <p><mat-slide-toggle>IV. század</mat-slide-toggle></p>
+        <p><mat-slide-toggle>V. század</mat-slide-toggle></p>
+      </mat-card-content>
+    </mat-card>
+
+    <!--Vegetation-->
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title> Növényborítottság</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p><mat-slide-toggle>2022</mat-slide-toggle></p>
+        <p><mat-slide-toggle>2023</mat-slide-toggle></p>
+        <p><mat-slide-toggle>2024</mat-slide-toggle></p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!--Mobile controls-->
+  <div
+    #mobileControlsContainer
+    id="mobileControlsContainer"
+    class="mobile-controls-container"
+  >
+    <button
+      mat-raised-button
+      data-bs-toggle="collapse"
+      data-bs-target="#controlPanel"
+    >
+      <mat-icon>settings</mat-icon>
+    </button>
+
+    <!--Control content (collapsible)-->
+    <!-- Collapsible Control Panel -->
+    <div id="controlPanel" class="collapse shadow bg-primary-light">
+      <div class="p-3">
+        <h5>Map Layers</h5>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="layer1" />
+          <label class="form-check-label" for="layer1"
+            >Show Ancient Roads</label
+          >
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="layer2" />
+          <label class="form-check-label" for="layer2">Show Sites</label>
+        </div>
+        <!-- Add more controls as needed -->
+      </div>
+    </div>
+  </div>
+</div>

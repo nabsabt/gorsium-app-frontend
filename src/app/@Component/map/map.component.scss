@@ -1,0 +1,45 @@
+.map {
+  height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* DESKTOP VIEW */
+@media only screen and (min-width: 701px) {
+  .desktop-controls-container {
+    position: absolute;
+    left: 10px;
+    top: 30%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 400px;
+    overflow-y: auto;
+  }
+
+  .mobile-controls-container {
+    display: none;
+  }
+}
+
+/* MOBILE VIEW */
+@media only screen and (max-width: 700px) {
+  .desktop-controls-container {
+    display: none;
+  }
+
+  .mobile-controls-container {
+    position: absolute;
+    bottom: 0;
+    left: auto;
+    right: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    .controlPanel {
+      max-height: 50%;
+      overflow-y: auto;
+    }
+  }
+}

@@ -1,1 +1,102 @@
 /* You can add global styles to this file, and also import other style files */
+@use "@angular/material" as mat;
+/* Importing Bootstrap SCSS file. */
+@import "bootstrap/scss/bootstrap";
+
+@font-face {
+  font-family: "Inter";
+  src: url("./assets/fonts/Inter-VariableFont_opsz,wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("./assets/fonts/Inter-Italic-VariableFont_opsz,wght.ttf")
+    format("truetype");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+body {
+  font-family: "Inter";
+}
+
+:root {
+  /* Viewport sizes */
+  --mobile-max-viewport: 700px;
+  --desktop-min-viewport: 701px;
+
+  /* Navbar height */
+  --mobile-navbar-height: 75px;
+  --desktop-navbar-height: 100px;
+}
+
+.txt-primary-dark {
+  color: #101010;
+}
+.txt-primary-light {
+  color: #e7e7e7;
+}
+
+.bg-primary-dark {
+  background-color: #101010;
+}
+.bg-primary-light {
+  background-color: #e7e7e7;
+}
+
+.txt-font-light {
+  font-weight: 300;
+}
+
+.txt-font-medium {
+  font-weight: 500;
+}
+
+.txt-font-bold {
+  font-weight: 700;
+}
+
+.txt-sm {
+  font-size: 16px;
+}
+.txt-md {
+  font-size: 18px;
+}
+.txt-lg {
+  font-size: 24px;
+}
+.txt-huge {
+  font-size: 36px;
+}
+
+/* DESKTOP VIEW */
+@media only screen and (min-width: 767px) {
+  html,
+  body {
+    height: 100vh; /* Fix the body to always cover the full viewport */
+    margin: 0;
+    padding: 0;
+    // overflow: hidden; /* Prevent scrolling on body */
+  }
+  body {
+    //background-color: #101010;
+  }
+}
+
+/* MOBILE VIEW */
+@media only screen and (max-width: 766px) {
+  html,
+  body {
+    height: 100vh; /* Fix the body to always cover the full viewport */
+    margin: 0;
+    padding: 0;
+    //overflow: hidden; /* Prevent scrolling on body */
+  }
+  body {
+    //background-color: #101010;
+  }
+}
