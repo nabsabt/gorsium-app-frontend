@@ -10,7 +10,8 @@ export class MaplibreService {
     responseData: any,
     layerName: string,
     layerColor: string,
-    sourceName: string
+    sourceName: string,
+    isLayerVisible?: boolean
   ) {
     map.getLayer(layerName) ? map.removeLayer(layerName) : '';
     map.getLayer(`${layerName}-label`)
@@ -31,6 +32,7 @@ export class MaplibreService {
       paint: {
         'fill-color': `${layerColor}`,
         'fill-opacity': 0.4,
+        'fill-outline-color': `black`,
       },
     });
 
@@ -48,5 +50,20 @@ export class MaplibreService {
         'text-color': `${layerColor}`,
       },
     });
+
+    if (!isLayerVisible) {
+      map.setLayoutProperty(layerName, 'visibility', 'none');
+      map.setLayoutProperty(`${layerName}-label`, 'visibility', 'none');
+    }
+  }
+
+  public toggleLayer(map: Map, layername: string, isVisible: boolean) {
+    if (isVisible) {
+      map.setLayoutProperty(layername, 'visibility', 'visible');
+      map.setLayoutProperty(`${layername}-label`, 'visibility', 'visible');
+    } else {
+      map.setLayoutProperty(layername, 'visibility', 'none');
+      map.setLayoutProperty(`${layername}-label`, 'visibility', 'none');
+    }
   }
 }
