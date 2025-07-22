@@ -1,5 +1,15 @@
 <div class="map" id="map">
   @if(layers.length !== 0){
+  <!--Desktop fast controls-->
+  <div
+    #desktopFastControls
+    id="desktopFastControls"
+    class="desktop-fast-controls-container"
+  >
+    <button (click)="geolocateUser()" mat-mini-fab class="bg-light">
+      <mat-icon> navigation</mat-icon>
+    </button>
+  </div>
   <!--Desktop controls-->
   <div
     #desktopControlsContainer
@@ -28,6 +38,16 @@
     }
   </div>
 
+  <!--Mobile fast controls-->
+  <div
+    #mobileFastControls
+    id="mobileFastControls"
+    class="mobile-fast-controls-container"
+  >
+    <button (click)="geolocateUser()" mat-mini-fab class="bg-light">
+      <mat-icon> navigation</mat-icon>
+    </button>
+  </div>
   <!--Mobile controls-->
   <div
     #mobileControlsContainer
@@ -40,7 +60,7 @@
       data-bs-toggle="collapse"
       data-bs-target="#controlPanel"
     >
-      <mat-icon class="m-0">{{
+      <mat-icon>{{
         isMobileControlPanelOpen ? "keyboard_arrow_down" : "keyboard_arrow_up"
       }}</mat-icon>
     </button>

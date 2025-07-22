@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { Map } from 'maplibre-gl';
+import { GeolocateControl, Map, Marker, Popup } from 'maplibre-gl';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MapService } from '../../@Service/map.service';
@@ -44,6 +44,14 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   private getMapsSub: Subscription;
 
   public map: Map;
+  private geolocate = new GeolocateControl({
+    positionOptions: {
+      enableHighAccuracy: true,
+    },
+    trackUserLocation: true,
+    showUserLocation: true,
+  });
+  private userLocationMarker: any;
 
   public layers: Array<{
     name: string;
@@ -76,11 +84,12 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       style:
         'https://api.maptiler.com/maps/openstreetmap/style.json?key=s1MwlFKobYrylkMVoLgc',
       zoom: 16,
-      minZoom: 14,
+      minZoom: 5,
       maplibreLogo: false,
       attributionControl: false,
     });
 
+    this.map.addControl(this.geolocate);
     //fetch geojsons here
     this.getMapsSub = this.mapService.getNavbarControls().subscribe({
       next: (res: Array<GEOJSONMapData>) => {
@@ -121,6 +130,17 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
       this.map.on('mousemove', () => {
         //fetch autoAuthUser here, if neccessary
+      });
+
+      this.geolocate.on('geolocate', (e) => {
+        const lngLat: any = [e.coords.longitude, e.coords.latitude];
+
+        const marker = new Marker({})
+          .setLngLat([e.coords.longitude, e.coords.latitude])
+          .addTo(this.map);
+
+        // Optionally, you can also add a popup to the marker
+        marker.setPopup(new Popup().setText('You are here!'));
       });
     });
   }
@@ -189,6 +209,28 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.layers.filter((layer: any) => layer.group === group);
   }
 
+  private createCustomMarkerElemenet(): HTMLElement {
+    const el = document.createElement('div');
+    el.className = 'user-location-marker';
+    el.style.width = '30px';
+    el.style.height = '30px';
+    el.style.backgroundImage = 'url(assets/icon/location_icon.svg)';
+    el.style.backgroundSize = 'cover';
+    el.style.borderRadius = '50%';
+
+    console.log('Adding marker element:', el);
+    return el;
+  }
+
+  public geolocateUser() {
+    if (this.geolocate) {
+      setTimeout(() => {
+        this.map.resize(); // 💥 important fix here
+        this.geolocate.trigger();
+        console.log('geolocate: ', this.geolocate);
+      }, 100); // Delay helps after UI interaction / panel open
+    }
+  }
   ngOnDestroy(): void {
     this.getMapsSub.unsubscribe();
   }

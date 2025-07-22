@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Map } from 'maplibre-gl';
+import { GeolocateControl, Map, Marker } from 'maplibre-gl';
 
 @Injectable()
 export class MaplibreService {

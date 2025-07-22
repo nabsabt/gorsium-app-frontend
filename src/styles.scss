@@ -2,6 +2,7 @@
 @use "@angular/material" as mat;
 /* Importing Bootstrap SCSS file. */
 @import "bootstrap/scss/bootstrap";
+@import "maplibre-gl/dist/maplibre-gl.css";
 
 @font-face {
   font-family: "Inter";
