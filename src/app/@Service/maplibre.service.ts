@@ -89,7 +89,7 @@ export class MaplibreService {
     map.getSource(sourceName) ? map.removeSource(sourceName) : '';
 
     const image = await map.loadImage(
-      '/assets/icon/location-pin-svgrepo-com.png'
+      './assets/icon/location-pin-svgrepo-com.png'
     );
     map.addImage('markerIcon', image.data);
 
