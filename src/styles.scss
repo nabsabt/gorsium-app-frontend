@@ -78,7 +78,7 @@ body {
 @media only screen and (min-width: 767px) {
   html,
   body {
-    height: 100vh; /* Fix the body to always cover the full viewport */
+    height: 100vh;
     margin: 0;
     padding: 0;
     //overflow: hidden; /* Prevent scrolling on body */
@@ -92,7 +92,8 @@ body {
 @media only screen and (max-width: 766px) {
   html,
   body {
-    height: 100vh; /* Fix the body to always cover the full viewport */
+    //height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
     margin: 0;
     padding: 0;
     //overflow: hidden; /* Prevent scrolling on body */
