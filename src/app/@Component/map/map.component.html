@@ -12,12 +12,17 @@
     </button>
 
     <!--Zoom in/out-->
-    <button (click)="zoom('in')" mat-mini-fab class="bg-light">
+    <button (click)="map.zoomIn()" mat-mini-fab class="bg-light">
       <mat-icon>add_circle_outline</mat-icon>
     </button>
 
-    <button (click)="zoom('out')" mat-mini-fab class="bg-light">
+    <button (click)="map.zoomOut()" mat-mini-fab class="bg-light">
       <mat-icon>remove_circle_outline</mat-icon>
+    </button>
+
+    <!--Toggle location marker-->
+    <button (click)="toggleMarkers()" mat-mini-fab class="bg-light">
+      <mat-icon> not_listed_location</mat-icon>
     </button>
   </div>
   <!--Desktop controls-->
@@ -58,12 +63,17 @@
       <mat-icon> navigation</mat-icon>
     </button>
     <!--Zoom in/out-->
-    <button (click)="zoom('in')" mat-mini-fab class="bg-light">
+    <button (click)="map.zoomIn()" mat-mini-fab class="bg-light">
       <mat-icon>add_circle_outline</mat-icon>
     </button>
 
-    <button (click)="zoom('out')" mat-mini-fab class="bg-light">
+    <button (click)="map.zoomOut()" mat-mini-fab class="bg-light">
       <mat-icon>remove_circle_outline</mat-icon>
+    </button>
+
+    <!--Toggle location marker-->
+    <button (click)="toggleMarkers()" mat-mini-fab class="bg-light">
+      <mat-icon> not_listed_location</mat-icon>
     </button>
   </div>
   <!--Mobile controls-->

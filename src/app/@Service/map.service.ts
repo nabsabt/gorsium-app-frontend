@@ -8,9 +8,15 @@ import { GEOJSONMapData } from '../@Interface/mapData.interface';
 export class MapService {
   constructor(private http: HttpClient) {}
 
-  public getNavbarControls(): Observable<Array<GEOJSONMapData>> {
+  public getGEOJSONFeatures(): Observable<Array<GEOJSONMapData>> {
     return this.http.get<Array<GEOJSONMapData>>(
       `${environment.apiURL}/map/getGEOJSONLayers`
+    );
+  }
+
+  public getLocationMarkers(): Observable<JSON | object> {
+    return this.http.get<JSON | object>(
+      `${environment.apiURL}/map/getLocationMarkers`
     );
   }
 }

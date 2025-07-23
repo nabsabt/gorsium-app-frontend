@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { GeolocateControl, Map, Marker } from 'maplibre-gl';
+import { GeolocateControl, Map, Marker, Popup } from 'maplibre-gl';
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -24,6 +24,7 @@ export class MaplibreService {
     map: Map,
     responseData: any,
     layerName: string,
+    layerGroup: string,
     layerColor: string,
     sourceName: string,
     isLayerVisible?: boolean
@@ -51,7 +52,7 @@ export class MaplibreService {
       type: 'fill',
       paint: {
         'fill-color': `${layerColor}`,
-        'fill-opacity': 0.4,
+        'fill-opacity': layerGroup === 'zone' ? 0.4 : 1,
         'fill-outline-color': `black`,
       },
     });
@@ -78,6 +79,58 @@ export class MaplibreService {
     }
   }
 
+  public async addLocationMarkers(
+    map: Map,
+    dataSource: any,
+    layerName: string,
+    sourceName: string
+  ) {
+    map.getLayer(layerName) ? map.removeLayer(layerName) : '';
+    map.getSource(sourceName) ? map.removeSource(sourceName) : '';
+
+    const image = await map.loadImage(
+      '/assets/icon/location-pin-svgrepo-com.png'
+    );
+    map.addImage('markerIcon', image.data);
+
+    map.addSource(sourceName, {
+      type: 'geojson',
+      data: dataSource,
+    });
+
+    map.addLayer({
+      id: layerName,
+      type: 'symbol',
+      source: sourceName,
+      layout: {
+        'icon-image': 'markerIcon',
+        'icon-overlap': 'always',
+        'icon-size': 0.15,
+      },
+    });
+    map.moveLayer(layerName);
+
+    map.on('click', layerName, (e: any) => {
+      const coordinates = e.features[0].geometry.coordinates.slice();
+      const description = e.features[0].properties.desc;
+
+      while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+      }
+      new Popup().setLngLat(coordinates).setHTML(description).addTo(map);
+
+      // Change the cursor to a pointer when the mouse is over the places layer.
+      map.on('mouseenter', 'places', () => {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+
+      // Change it back to a pointer when it leaves.
+      map.on('mouseleave', 'places', () => {
+        map.getCanvas().style.cursor = '';
+      });
+    });
+  }
+
   public toggleLayer(map: Map, layername: string, isVisible: boolean) {
     if (isVisible) {
       map.setLayoutProperty(layername, 'visibility', 'visible');
@@ -91,6 +144,11 @@ export class MaplibreService {
   public addGeolocate(map: Map) {
     map.addControl(this.geolocate);
   }
+
+  public removeGeolocate(map: Map) {
+    map.removeControl(this.geolocate);
+  }
+
   public addGeolocateMarker(map: Map) {
     this.geolocate.on('geolocate', (e) => {
       if (!this.userMarker) {
@@ -126,7 +184,7 @@ export class MaplibreService {
        * alert is shown ->
        */
       if (foundPolygon && foundPolygon !== this.lastPolygonUserIsIn) {
-        this.snackBar.open(`You are inside of ${foundPolygon}`, '', {
+        this.snackBar.open(`A ${foundPolygon} területére érkezett!`, '', {
           duration: 5000,
           panelClass: ['notification-snackbar'],
         });

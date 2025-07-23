@@ -46,6 +46,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('mobileControlsContainer') mobileControlsContainer: ElementRef;
   @ViewChild('desktopControlsContainer') desktopControlsContainer: ElementRef;
   private getMapsSub: Subscription;
+  private getLocationsSub: Subscription;
 
   public isLoading: boolean;
   public map: Map;
@@ -90,9 +91,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapHelper.addGeolocate(this.map);
 
     //fetch geojsons here
-    this.getMapsSub = this.mapService.getNavbarControls().subscribe({
+    this.getMapsSub = this.mapService.getGEOJSONFeatures().subscribe({
       next: (res: Array<GEOJSONMapData>) => {
-        const nonUniqueGroups: string[] = [];
+        const groups: string[] = [];
         res.forEach((data) => {
           const layerSetting = this.USER_SETTINGS.layerVisibility.layers.find(
             (layer) => layer.layerName === data.name
@@ -106,15 +107,35 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
             group: data.group,
           });
 
-          nonUniqueGroups.push(data.group);
+          groups.push(data.group);
         });
         this.updateUserSettingsToLocalStorage();
 
-        this.layerGroups = nonUniqueGroups.filter((value, index, array) => {
+        this.layerGroups = groups.filter((value, index, array) => {
           return array.indexOf(value) === index;
         });
         this.manageLayers();
         this.isLoading = false;
+      },
+      error: (error: HttpErrorResponse): HttpErrorResponse => {
+        this.isLoading = false;
+        this.snackBar.open(error.error.message, '', {
+          duration: 3000,
+          panelClass: ['danger-snackbar'],
+        });
+        return error;
+      },
+    });
+
+    //fetch locationMarkers here
+    this.getLocationsSub = this.mapService.getLocationMarkers().subscribe({
+      next: (res: any) => {
+        this.mapHelper.addLocationMarkers(
+          this.map,
+          res,
+          res.name,
+          `${res.name}-source`
+        );
       },
       error: (error: HttpErrorResponse): HttpErrorResponse => {
         this.isLoading = false;
@@ -181,6 +202,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           this.map,
           layer.geoJSON,
           layer.name,
+          layer.group,
           layer.color,
           `${layer.name}-source`,
           layer.visible
@@ -210,11 +232,12 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapHelper.triggerGeolocate(this.map);
   }
 
-  public zoom(direction: string) {
-    direction === 'in' ? this.map.zoomIn() : this.map.zoomOut();
-  }
+  public toggleMarkers() {}
 
   ngOnDestroy(): void {
     this.getMapsSub.unsubscribe();
+    if (this.map) {
+      this.mapHelper.removeGeolocate(this.map);
+    }
   }
 }
