@@ -15,6 +15,8 @@ export class MaplibreService {
     showUserLocation: true,
     showAccuracyCircle: true,
   });
+  private userMarker: Marker | null = null;
+  private lastPolygonUserIsIn: string | null = null;
 
   private polygons: Array<{ name: string; feature: any }> = [];
 
@@ -91,9 +93,13 @@ export class MaplibreService {
   }
   public addGeolocateMarker(map: Map) {
     this.geolocate.on('geolocate', (e) => {
-      const marker = new Marker({})
-        .setLngLat([e.coords.longitude, e.coords.latitude])
-        .addTo(map);
+      if (!this.userMarker) {
+        this.userMarker = new Marker({})
+          .setLngLat([e.coords.longitude, e.coords.latitude])
+          .addTo(map);
+      } else {
+        this.userMarker.setLngLat([e.coords.longitude, e.coords.latitude]);
+      }
 
       const userLocation: any = {
         type: 'Feature',
@@ -103,19 +109,40 @@ export class MaplibreService {
         },
       };
 
-      this.polygons.forEach((polygon) => {
+      let foundPolygon = null;
+      /**
+       * 1.Check, if user is inside any of the DB-stored polygons (zones)->
+       */
+      for (const polygon of this.polygons) {
         const inside = booleanPointInPolygon(userLocation, polygon.feature);
         if (inside) {
-          this.snackBar.open(`You are inside of ${polygon.name}`, '', {
-            duration: 5000,
-            panelClass: ['notification-snackbar'],
-          });
+          foundPolygon = polygon.name;
+          break;
         }
-      });
+      }
+
+      /**
+       * 2.If the currently entered polygon  !== to the previously entered polygon,
+       * alert is shown ->
+       */
+      if (foundPolygon && foundPolygon !== this.lastPolygonUserIsIn) {
+        this.snackBar.open(`You are inside of ${foundPolygon}`, '', {
+          duration: 5000,
+          panelClass: ['notification-snackbar'],
+        });
+        this.lastPolygonUserIsIn = foundPolygon;
+      }
+
+      /**
+       * 3. If user is not in ANY of the DB-stored zones, the previously entered
+       * polygon is set to null ->
+       */
+      if (!foundPolygon && this.lastPolygonUserIsIn) {
+        this.lastPolygonUserIsIn = null; // reset if user leaves all polygons
+      }
     });
   }
   public triggerGeolocate(map: Map) {
-    //map.resize();
     this.geolocate.trigger();
   }
 }
