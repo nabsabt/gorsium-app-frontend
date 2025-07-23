@@ -1,9 +1,22 @@
 import { Injectable } from '@angular/core';
 import { GeolocateControl, Map, Marker } from 'maplibre-gl';
+import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable()
 export class MaplibreService {
-  constructor() {}
+  constructor(private snackBar: MatSnackBar) {}
+
+  private geolocate = new GeolocateControl({
+    positionOptions: {
+      enableHighAccuracy: true,
+    },
+    trackUserLocation: true,
+    showUserLocation: true,
+    showAccuracyCircle: true,
+  });
+
+  private polygons: Array<{ name: string; feature: any }> = [];
 
   public addGeoJSONLayer(
     map: Map,
@@ -13,6 +26,11 @@ export class MaplibreService {
     sourceName: string,
     isLayerVisible?: boolean
   ) {
+    /**
+     * add zones to polygons->
+     */
+    this.polygons.push({ name: layerName, feature: responseData.features[0] });
+
     map.getLayer(layerName) ? map.removeLayer(layerName) : '';
     map.getLayer(`${layerName}-label`)
       ? map.removeLayer(`${layerName}-label`)
@@ -47,7 +65,8 @@ export class MaplibreService {
         'text-anchor': 'center',
       },
       paint: {
-        'text-color': `${layerColor}`,
+        /*  'text-color': `${layerColor}`, */
+        'text-color': 'black',
       },
     });
 
@@ -65,5 +84,38 @@ export class MaplibreService {
       map.setLayoutProperty(layername, 'visibility', 'none');
       map.setLayoutProperty(`${layername}-label`, 'visibility', 'none');
     }
+  }
+
+  public addGeolocate(map: Map) {
+    map.addControl(this.geolocate);
+  }
+  public addGeolocateMarker(map: Map) {
+    this.geolocate.on('geolocate', (e) => {
+      const marker = new Marker({})
+        .setLngLat([e.coords.longitude, e.coords.latitude])
+        .addTo(map);
+
+      const userLocation: any = {
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [e.coords.longitude, e.coords.latitude],
+        },
+      };
+
+      this.polygons.forEach((polygon) => {
+        const inside = booleanPointInPolygon(userLocation, polygon.feature);
+        if (inside) {
+          this.snackBar.open(`You are inside of ${polygon.name}`, '', {
+            duration: 5000,
+            panelClass: ['notification-snackbar'],
+          });
+        }
+      });
+    });
+  }
+  public triggerGeolocate(map: Map) {
+    //map.resize();
+    this.geolocate.trigger();
   }
 }

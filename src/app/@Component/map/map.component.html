@@ -6,8 +6,18 @@
     id="desktopFastControls"
     class="desktop-fast-controls-container"
   >
+    <!--Geolocate-->
     <button (click)="geolocateUser()" mat-mini-fab class="bg-light">
       <mat-icon> navigation</mat-icon>
+    </button>
+
+    <!--Zoom in/out-->
+    <button (click)="zoom('in')" mat-mini-fab class="bg-light">
+      <mat-icon>add_circle_outline</mat-icon>
+    </button>
+
+    <button (click)="zoom('out')" mat-mini-fab class="bg-light">
+      <mat-icon>remove_circle_outline</mat-icon>
     </button>
   </div>
   <!--Desktop controls-->
@@ -46,6 +56,14 @@
   >
     <button (click)="geolocateUser()" mat-mini-fab class="bg-light">
       <mat-icon> navigation</mat-icon>
+    </button>
+    <!--Zoom in/out-->
+    <button (click)="zoom('in')" mat-mini-fab class="bg-light">
+      <mat-icon>add_circle_outline</mat-icon>
+    </button>
+
+    <button (click)="zoom('out')" mat-mini-fab class="bg-light">
+      <mat-icon>remove_circle_outline</mat-icon>
     </button>
   </div>
   <!--Mobile controls-->
@@ -97,3 +115,9 @@
   </div>
   }
 </div>
+
+@if(isLoading){
+<div class="progess-spinner">
+  <mat-spinner></mat-spinner>
+</div>
+}

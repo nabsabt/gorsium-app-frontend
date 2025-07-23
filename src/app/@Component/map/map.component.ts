@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { GeolocateControl, Map, Marker, Popup } from 'maplibre-gl';
+import { Map } from 'maplibre-gl';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MapService } from '../../@Service/map.service';
@@ -23,6 +23,8 @@ import {
   MatSlideToggleModule,
 } from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'map',
@@ -35,6 +37,8 @@ import { FormsModule } from '@angular/forms';
     MatCardModule,
     MatSlideToggleModule,
     FormsModule,
+    MatProgressSpinnerModule,
+    MatSnackBarModule,
   ],
   providers: [MapService, MaplibreService],
 })
@@ -43,15 +47,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('desktopControlsContainer') desktopControlsContainer: ElementRef;
   private getMapsSub: Subscription;
 
+  public isLoading: boolean;
   public map: Map;
-  private geolocate = new GeolocateControl({
-    positionOptions: {
-      enableHighAccuracy: true,
-    },
-    trackUserLocation: true,
-    showUserLocation: true,
-  });
-  private userLocationMarker: any;
 
   public layers: Array<{
     name: string;
@@ -73,10 +70,12 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private mapService: MapService,
-    private mapHelper: MaplibreService
+    private mapHelper: MaplibreService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.fetchUserSettingsFromLocalStorage();
     this.map = new Map({
       container: 'map',
@@ -88,8 +87,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       maplibreLogo: false,
       attributionControl: false,
     });
+    this.mapHelper.addGeolocate(this.map);
 
-    this.map.addControl(this.geolocate);
     //fetch geojsons here
     this.getMapsSub = this.mapService.getNavbarControls().subscribe({
       next: (res: Array<GEOJSONMapData>) => {
@@ -115,8 +114,14 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           return array.indexOf(value) === index;
         });
         this.manageLayers();
+        this.isLoading = false;
       },
       error: (error: HttpErrorResponse): HttpErrorResponse => {
+        this.isLoading = false;
+        this.snackBar.open(error.error.message, '', {
+          duration: 3000,
+          panelClass: ['danger-snackbar'],
+        });
         return error;
       },
     });
@@ -132,16 +137,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         //fetch autoAuthUser here, if neccessary
       });
 
-      this.geolocate.on('geolocate', (e) => {
-        const lngLat: any = [e.coords.longitude, e.coords.latitude];
-
-        const marker = new Marker({})
-          .setLngLat([e.coords.longitude, e.coords.latitude])
-          .addTo(this.map);
-
-        // Optionally, you can also add a popup to the marker
-        marker.setPopup(new Popup().setText('You are here!'));
-      });
+      this.mapHelper.addGeolocateMarker(this.map);
+      this.mapHelper.triggerGeolocate(this.map);
     });
   }
 
@@ -209,28 +206,14 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.layers.filter((layer: any) => layer.group === group);
   }
 
-  private createCustomMarkerElemenet(): HTMLElement {
-    const el = document.createElement('div');
-    el.className = 'user-location-marker';
-    el.style.width = '30px';
-    el.style.height = '30px';
-    el.style.backgroundImage = 'url(assets/icon/location_icon.svg)';
-    el.style.backgroundSize = 'cover';
-    el.style.borderRadius = '50%';
-
-    console.log('Adding marker element:', el);
-    return el;
-  }
-
   public geolocateUser() {
-    if (this.geolocate) {
-      setTimeout(() => {
-        this.map.resize(); // 💥 important fix here
-        this.geolocate.trigger();
-        console.log('geolocate: ', this.geolocate);
-      }, 100); // Delay helps after UI interaction / panel open
-    }
+    this.mapHelper.triggerGeolocate(this.map);
   }
+
+  public zoom(direction: string) {
+    direction === 'in' ? this.map.zoomIn() : this.map.zoomOut();
+  }
+
   ngOnDestroy(): void {
     this.getMapsSub.unsubscribe();
   }

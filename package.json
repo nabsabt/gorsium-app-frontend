@@ -35,6 +35,7 @@
     "@omnedia/ngx-typewriter": "^3.1.1",
     "@omnedia/ngx-vortex": "^3.0.1",
     "@popperjs/core": "^2.11.8",
+    "@turf/boolean-point-in-polygon": "^7.2.0",
     "bootstrap": "^5.3.6",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",

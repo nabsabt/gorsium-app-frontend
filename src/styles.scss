@@ -101,3 +101,37 @@ body {
     //background-color: #101010;
   }
 }
+
+.mat-mdc-snack-bar-container {
+  &.danger-snackbar {
+    --mdc-snackbar-container-color: #fa8282;
+    --mdc-snackbar-supporting-text-color: #101010;
+  }
+  &.success-snackbar {
+    --mdc-snackbar-container-color: #92fa82;
+    --mdc-snackbar-supporting-text-color: #101010;
+  }
+  &.notification-snackbar {
+    --mdc-snackbar-container-color: #bababa;
+    --mdc-snackbar-supporting-text-color: #101010;
+  }
+}
+
+.mat-mdc-progress-spinner circle,
+.mat-mdc-spinner circle {
+  position: absolute;
+  stroke: rgb(4, 0, 255);
+}
+
+.mat-mdc-progress-bar {
+  --mdc-linear-progress-active-indicator-color: rgb(4, 0, 255) !important;
+  --mdc-linear-progress-track-color: rgba(4, 0, 255, 0.3) !important;
+}
+
+.progess-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  z-index: 100;
+}
