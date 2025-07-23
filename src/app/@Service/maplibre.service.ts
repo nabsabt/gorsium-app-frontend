@@ -88,9 +88,13 @@ export class MaplibreService {
     map.getLayer(layerName) ? map.removeLayer(layerName) : '';
     map.getSource(sourceName) ? map.removeSource(sourceName) : '';
 
-    const image = await map.loadImage(
+    /* const image = await map.loadImage(
       './assets/icon/location-pin-svgrepo-com.png'
-    );
+    ); */
+    const base = document.getElementsByTagName('base')[0].href;
+    const imagePath = `${base}assets/icon/location-pin-svgrepo-com.png`;
+    const image = await map.loadImage(imagePath);
+
     map.addImage('markerIcon', image.data);
 
     map.addSource(sourceName, {
