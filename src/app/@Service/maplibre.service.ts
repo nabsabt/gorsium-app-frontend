@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { GeolocateControl, Map, Marker, Popup } from 'maplibre-gl';
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class MaplibreService {
-  constructor(private snackBar: MatSnackBar) {}
+  constructor() {}
 
   private geolocate = new GeolocateControl({
     positionOptions: {
@@ -16,9 +16,12 @@ export class MaplibreService {
     showAccuracyCircle: true,
   });
   private userMarker: Marker | null = null;
-  private lastPolygonUserIsIn: string | null = null;
+  //private lastPolygonUserIsIn: string | null = null;
 
   private polygons: Array<{ name: string; feature: any }> = [];
+  private zones: Array<{ name: string; feature: any }> = [];
+
+  public currentZone = new BehaviorSubject<null | string>(null);
 
   public addGeoJSONLayer(
     map: Map,
@@ -30,9 +33,17 @@ export class MaplibreService {
     isLayerVisible?: boolean
   ) {
     /**
-     * add zones to polygons->
+     * add zones to zones, other polygons to polygons->
      */
-    this.polygons.push({ name: layerName, feature: responseData.features[0] });
+    layerGroup !== 'zone'
+      ? this.polygons.push({
+          name: layerName,
+          feature: responseData.features[0],
+        })
+      : '';
+    layerGroup == 'zone'
+      ? this.zones.push({ name: layerName, feature: responseData.features[0] })
+      : '';
 
     map.getLayer(layerName) ? map.removeLayer(layerName) : '';
     map.getLayer(`${layerName}-label`)
@@ -171,37 +182,38 @@ export class MaplibreService {
         },
       };
 
-      let foundPolygon = null;
+      //let foundPolygon = null;
       /**
        * 1.Check, if user is inside any of the DB-stored polygons (zones)->
        */
-      for (const polygon of this.polygons) {
+      for (const polygon of this.zones) {
         const inside = booleanPointInPolygon(userLocation, polygon.feature);
         if (inside) {
-          foundPolygon = polygon.name;
+          //foundPolygon = polygon.name;
+          this.currentZone.next(polygon.name);
+
           break;
         }
+        this.currentZone.next(null);
       }
 
       /**
        * 2.If the currently entered polygon  !== to the previously entered polygon,
        * alert is shown ->
        */
-      if (foundPolygon && foundPolygon !== this.lastPolygonUserIsIn) {
-        this.snackBar.open(`A ${foundPolygon} területére érkezett!`, '', {
-          duration: 5000,
-          panelClass: ['notification-snackbar'],
-        });
+      /* if (foundPolygon && foundPolygon !== this.lastPolygonUserIsIn) {
+        this.currentZone.next(foundPolygon);
         this.lastPolygonUserIsIn = foundPolygon;
-      }
+      } */
 
       /**
        * 3. If user is not in ANY of the DB-stored zones, the previously entered
        * polygon is set to null ->
        */
-      if (!foundPolygon && this.lastPolygonUserIsIn) {
+      /* if (!foundPolygon && this.lastPolygonUserIsIn) {
         this.lastPolygonUserIsIn = null; // reset if user leaves all polygons
-      }
+        this.currentZone.next(null);
+      } */
     });
   }
   public triggerGeolocate(map: Map) {

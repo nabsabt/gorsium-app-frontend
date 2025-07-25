@@ -1,11 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { Map } from 'maplibre-gl';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -43,13 +36,12 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
   providers: [MapService, MaplibreService],
 })
 export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
-  @ViewChild('mobileControlsContainer') mobileControlsContainer: ElementRef;
-  @ViewChild('desktopControlsContainer') desktopControlsContainer: ElementRef;
   private getMapsSub: Subscription;
   private getLocationsSub: Subscription;
 
   public isLoading: boolean;
   public map: Map;
+  public currentZone: string | null;
 
   public layers: Array<{
     name: string;
@@ -146,6 +138,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         return error;
       },
     });
+
+    this.mapHelper.currentZone.subscribe((zone) => (this.currentZone = zone));
   }
 
   ngAfterViewInit(): void {
@@ -232,12 +226,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapHelper.triggerGeolocate(this.map);
   }
 
-  public toggleMarkers() {}
-
   ngOnDestroy(): void {
     this.getMapsSub.unsubscribe();
     if (this.map) {
       this.mapHelper.removeGeolocate(this.map);
+    }
+    if (this.getLocationsSub) {
+      this.getLocationsSub.unsubscribe();
     }
   }
 }

@@ -1,5 +1,10 @@
 <div class="map" id="map">
   @if(layers.length !== 0){
+  <div class="current-zone-label-container m-1 bg-primary-light">
+    <p class="m-0 p-0">
+      {{ currentZone ? `Jelenleg itt van: ${currentZone}` : 'Zónán kívül tartózkodik.' }}
+    </p>
+  </div>
   <!--Desktop fast controls-->
   <div
     #desktopFastControls
@@ -18,11 +23,6 @@
 
     <button (click)="map.zoomOut()" mat-mini-fab class="bg-light">
       <mat-icon>remove_circle_outline</mat-icon>
-    </button>
-
-    <!--Toggle location marker-->
-    <button (click)="toggleMarkers()" mat-mini-fab class="bg-light">
-      <mat-icon> not_listed_location</mat-icon>
     </button>
   </div>
   <!--Desktop controls-->
@@ -70,11 +70,6 @@
     <button (click)="map.zoomOut()" mat-mini-fab class="bg-light">
       <mat-icon>remove_circle_outline</mat-icon>
     </button>
-
-    <!--Toggle location marker-->
-    <!-- <button (click)="toggleMarkers()" mat-mini-fab class="bg-light">
-      <mat-icon> not_listed_location</mat-icon>
-    </button> -->
   </div>
   <!--Mobile controls-->
   <div
@@ -83,7 +78,7 @@
     class="mobile-controls-container"
   >
     <button
-      matMiniFab
+      mat-fab
       class="mx-auto"
       data-bs-toggle="collapse"
       data-bs-target="#controlPanel"

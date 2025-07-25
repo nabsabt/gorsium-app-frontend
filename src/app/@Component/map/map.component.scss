@@ -4,6 +4,17 @@
   margin: 0;
   padding: 0;
   overflow: hidden;
+  .current-zone-label-container {
+    position: absolute;
+    width: 50%;
+    max-width: 400px;
+    z-index: 11;
+    padding: 0.5rem;
+    border-radius: 10px;
+    border-style: solid;
+    border-color: var(#101010);
+    border-width: 1px;
+  }
 }
 
 mat-icon {
@@ -11,6 +22,10 @@ mat-icon {
 }
 /* DESKTOP VIEW */
 @media only screen and (min-width: 701px) {
+  .current-zone-label-container {
+    position: absolute;
+    top: var(--desktop-navbar-height);
+  }
   .desktop-controls-container {
     z-index: 10;
     position: absolute;
@@ -42,6 +57,10 @@ mat-icon {
 
 /* MOBILE VIEW */
 @media only screen and (max-width: 700px) {
+  .current-zone-label-container {
+    position: absolute;
+    top: var(--mobile-navbar-height);
+  }
   .desktop-controls-container {
     display: none;
   }
