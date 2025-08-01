@@ -10,6 +10,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FirebaseSourceService } from '../../@Service/firebase.source.service';
 import { Subscription } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'home-component',
@@ -17,11 +18,13 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrl: './home.component.scss',
   standalone: true,
   providers: [FirebaseSourceService],
-  imports: [],
+  imports: [MatProgressSpinnerModule],
 })
 export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('nextCarouselButton') nextCarouselButton: ElementRef;
   private getImgUrls: Subscription;
+
+  public isLoading: boolean;
 
   public homeImageUrls: Array<string> = [];
   constructor(
@@ -35,6 +38,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.activatedRoute.fragment.subscribe((fragment: string | null) => {
       if (fragment) this.jumpToSection(fragment);
     });
@@ -42,8 +46,10 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.getImgUrls = this.firebaseService.getHomeImageURLs().subscribe({
       next: (res: Array<string>) => {
         this.homeImageUrls = res;
+        this.isLoading = false;
       },
       error: (error: HttpErrorResponse): HttpErrorResponse => {
+        this.isLoading = false;
         return error;
       },
     });
