@@ -1,7 +1,14 @@
 /* DESKTOP VIEW */
 @media only screen and (min-width: 767px) {
   nav {
-    background-color: #e7e7e7;
+    //background-color: rgba(231, 231, 231, 0.4);
+    background: linear-gradient(
+      to right,
+      rgba(231, 231, 231, 1) 0%,
+      rgba(231, 231, 231, 0) 30%
+    );
+    background-color: rgba(231, 231, 231, 0.4);
+
     height: var(--desktop-navbar-height);
 
     .navbar-collapse {
@@ -29,12 +36,14 @@
 /* MOBILE VIEW */
 @media only screen and (max-width: 766px) {
   nav {
-    background-color: #e7e7e7;
+    background-color: rgba(231, 231, 231, 0.4);
 
     height: var(--mobile-navbar-height);
 
     .navbar-collapse {
-      background-color: #e7e7e7;
+      background-color: rgba(231, 231, 231, 0.8);
+      margin-top: 1.7rem;
+
       .logo-container {
         margin-top: 2rem;
         margin-bottom: 2rem;

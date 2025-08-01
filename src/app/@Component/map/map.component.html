@@ -1,5 +1,5 @@
 <div class="map" id="map">
-  @if(layers.length !== 0){
+  @if(objects.length !== 0){
   <div class="current-zone-label-container m-1 bg-primary-light">
     <p class="m-0 p-0">
       {{ currentZone ? `Jelenleg itt van: ${currentZone}` : 'Zónán kívül tartózkodik.' }}
@@ -13,7 +13,7 @@
   >
     <!--Geolocate-->
     <button (click)="geolocateUser()" mat-mini-fab class="bg-light">
-      <mat-icon> navigation</mat-icon>
+      <mat-icon> navigation </mat-icon>
     </button>
 
     <!--Zoom in/out-->
@@ -24,6 +24,10 @@
     <button (click)="map.zoomOut()" mat-mini-fab class="bg-light">
       <mat-icon>remove_circle_outline</mat-icon>
     </button>
+
+    <button (click)="panToGorsium()" mat-mini-fab class="bg-light">
+      <mat-icon> castle </mat-icon>
+    </button>
   </div>
   <!--Desktop controls-->
   <div
@@ -31,14 +35,13 @@
     id="desktopControlsContainer"
     class="desktop-controls-container bg-primary-light p-2"
   >
-    <!--Groups (each mat card is a group)-->
-    @for(group of layerGroups; track group){
+    <!--Layer switcher (each mat card should be a group later)-->
     <mat-card appearance="outlined">
       <mat-card-header>
-        <mat-card-title> {{ group }}</mat-card-title>
+        <mat-card-title>Objektumok</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        @for( layer of getLayersForGroup(group); track layer){
+        @for( layer of objects; track layer){
         <p>
           <mat-slide-toggle
             [ngModel]="layer.visible"
@@ -50,7 +53,6 @@
         }
       </mat-card-content>
     </mat-card>
-    }
   </div>
 
   <!--Mobile fast controls-->
@@ -69,6 +71,10 @@
 
     <button (click)="map.zoomOut()" mat-mini-fab class="bg-light">
       <mat-icon>remove_circle_outline</mat-icon>
+    </button>
+
+    <button (click)="panToGorsium()" mat-mini-fab class="bg-light">
+      <mat-icon> castle </mat-icon>
     </button>
   </div>
   <!--Mobile controls-->
@@ -97,13 +103,12 @@
       (hidden.bs.collapse)="isMobileControlPanelOpen = false"
     >
       <!--Groups (each mat card is a group)-->
-      @for(group of layerGroups; track group){
       <mat-card appearance="outlined">
         <mat-card-header>
-          <mat-card-title> {{ group }}</mat-card-title>
+          <mat-card-title>Objektumok</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          @for( layer of getLayersForGroup(group); track layer){
+          @for( layer of objects; track layer){
           <p>
             <mat-slide-toggle
               [ngModel]="layer.visible"
@@ -115,7 +120,6 @@
           }
         </mat-card-content>
       </mat-card>
-      }
     </div>
   </div>
   }

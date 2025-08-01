@@ -37,21 +37,25 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 })
 export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   private getMapsSub: Subscription;
+  private getZonesSub: Subscription;
   private getLocationsSub: Subscription;
 
   public isLoading: boolean;
   public map: Map;
   public currentZone: string | null;
 
-  public layers: Array<{
+  public objects: Array<{
     name: string;
     visible: boolean;
     color: string;
     geoJSON: {};
-    group: string;
   }> = [];
 
-  public layerGroups: Array<string> = [];
+  public zones: Array<{
+    name: string;
+    color: string;
+    geoJSON: {};
+  }> = [];
 
   public USER_SETTINGS: UserSettings = {
     layerVisibility: {
@@ -80,33 +84,62 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       maplibreLogo: false,
       attributionControl: false,
     });
+
     this.mapHelper.addGeolocate(this.map);
 
-    //fetch geojsons here
-    this.getMapsSub = this.mapService.getGEOJSONFeatures().subscribe({
+    /**
+     * fetch objects ->
+     */
+    this.getMapsSub = this.mapService.getGEOJSONObjects().subscribe({
       next: (res: Array<GEOJSONMapData>) => {
-        const groups: string[] = [];
         res.forEach((data) => {
           const layerSetting = this.USER_SETTINGS.layerVisibility.layers.find(
             (layer) => layer.layerName === data.name
           );
 
-          this.layers.push({
+          this.objects.push({
             name: data.name,
             visible: layerSetting?.isVisible ?? true,
             color: data.color,
             geoJSON: data,
-            group: data.group,
           });
-
-          groups.push(data.group);
         });
         this.updateUserSettingsToLocalStorage();
 
-        this.layerGroups = groups.filter((value, index, array) => {
-          return array.indexOf(value) === index;
-        });
         this.manageLayers();
+        this.isLoading = false;
+      },
+      error: (error: HttpErrorResponse): HttpErrorResponse => {
+        this.isLoading = false;
+        this.snackBar.open(error.error.message, '', {
+          duration: 3000,
+          panelClass: ['danger-snackbar'],
+        });
+        return error;
+      },
+    });
+
+    /**
+     * fetch zones and add them to map here->
+     */
+    this.getZonesSub = this.mapService.getGEOJSONZones().subscribe({
+      next: (res: Array<GEOJSONMapData>) => {
+        res.forEach((data) => {
+          this.zones.push({
+            name: data.name,
+            color: data.color,
+            geoJSON: data,
+          });
+
+          this.mapHelper.addGEOJSONZones(
+            this.map,
+            data,
+            data.name,
+            data.color,
+            `${data.name}-source`
+          );
+        });
+
         this.isLoading = false;
       },
       error: (error: HttpErrorResponse): HttpErrorResponse => {
@@ -191,12 +224,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       /**
        * batch layer render->
        */
-      this.layers.forEach((layer) => {
-        this.mapHelper.addGeoJSONLayer(
+      this.objects.forEach((layer) => {
+        this.mapHelper.addGeoJSONObjectsLayer(
           this.map,
           layer.geoJSON,
           layer.name,
-          layer.group,
           layer.color,
           `${layer.name}-source`,
           layer.visible
@@ -218,12 +250,12 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     localStorage.setItem('USER_SETTINGS', JSON.stringify(this.USER_SETTINGS));
   }
 
-  public getLayersForGroup(group: string): Array<any> {
-    return this.layers.filter((layer: any) => layer.group === group);
-  }
-
   public geolocateUser() {
     this.mapHelper.triggerGeolocate(this.map);
+  }
+
+  public panToGorsium() {
+    this.map.flyTo({ center: [18.42052, 47.08989], zoom: 17 });
   }
 
   ngOnDestroy(): void {
@@ -233,6 +265,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     if (this.getLocationsSub) {
       this.getLocationsSub.unsubscribe();
+    }
+    if (this.getZonesSub) {
+      this.getZonesSub.unsubscribe();
     }
   }
 }

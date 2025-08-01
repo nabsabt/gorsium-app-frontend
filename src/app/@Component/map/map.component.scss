@@ -4,6 +4,12 @@
   margin: 0;
   padding: 0;
   overflow: hidden;
+
+  .maplibregl-ctrl-top-right {
+    background-color: red !important;
+    transform: translateX(-500px) !important;
+  }
+
   .current-zone-label-container {
     position: absolute;
     width: 50%;
@@ -53,6 +59,10 @@ mat-icon {
   .mobile-controls-container {
     display: none;
   }
+
+  .mobile-fast-controls-container {
+    display: none;
+  }
 }
 
 /* MOBILE VIEW */
@@ -62,6 +72,10 @@ mat-icon {
     top: var(--mobile-navbar-height);
   }
   .desktop-controls-container {
+    display: none;
+  }
+
+  .desktop-fast-controls-container {
     display: none;
   }
   .mobile-fast-controls-container {

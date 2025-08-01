@@ -24,6 +24,9 @@
 body {
   font-family: "Inter";
 }
+hr {
+  color: #101010;
+}
 
 :root {
   /* Viewport sizes */
@@ -33,6 +36,10 @@ body {
   /* Navbar height */
   --mobile-navbar-height: 75px;
   --desktop-navbar-height: 100px;
+
+  /*Carousel (hero section) height*/
+  --desktop-carousel-height: 400px;
+  --mobile-carousel-height: 350px;
 }
 
 .txt-primary-dark {

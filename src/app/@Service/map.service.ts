@@ -8,9 +8,15 @@ import { GEOJSONMapData } from '../@Interface/mapData.interface';
 export class MapService {
   constructor(private http: HttpClient) {}
 
-  public getGEOJSONFeatures(): Observable<Array<GEOJSONMapData>> {
+  public getGEOJSONObjects(): Observable<Array<GEOJSONMapData>> {
     return this.http.get<Array<GEOJSONMapData>>(
       `${environment.apiURL}/map/getGEOJSONLayers`
+    );
+  }
+
+  public getGEOJSONZones(): Observable<Array<GEOJSONMapData>> {
+    return this.http.get<Array<GEOJSONMapData>>(
+      `${environment.apiURL}/map/getZoneLayers`
     );
   }
 

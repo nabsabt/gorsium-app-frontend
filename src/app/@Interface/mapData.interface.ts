@@ -2,7 +2,7 @@ export interface GEOJSONMapData {
   name: string;
   geojson: JSON | object;
   color: string;
-  group: string;
+  //group?: string;
 }
 
 export interface UserSettings {

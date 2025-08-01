@@ -1,4 +1,57 @@
 <div class="home-container">
+  <!-- Image slider container -->
+  <div id="imageSlider" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+      @for(image of homeImageUrls; track image; let i = $index){
+      <button
+        type="button"
+        data-bs-target="#imageSlider"
+        [attr.data-bs-slide-to]="i"
+        [class.active]="i === 0"
+        [attr.aria-current]="i === 0 ? 'true' : null"
+        [attr.aria-label]="'Slide ' + (i + 1)"
+      ></button>
+      }
+    </div>
+
+    <div class="carousel-inner">
+      @for(image of homeImageUrls; track image; let i = $index){
+      <div
+        class="carousel-item active"
+        data-bs-interval="4000"
+        [class.active]="i === 0"
+      >
+        <img [src]="image" class="d-block w-100" alt="Gorsium" />
+      </div>
+      }
+    </div>
+
+    <button
+      class="carousel-control-prev"
+      type="button"
+      data-bs-target="#imageSlider"
+      data-bs-slide="prev"
+    >
+      <span
+        class="carousel-control-prev-icon rounded bg-dark"
+        aria-hidden="true"
+      ></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button
+      #nextCarouselButton
+      class="carousel-control-next"
+      type="button"
+      data-bs-target="#imageSlider"
+      data-bs-slide="next"
+    >
+      <span
+        class="carousel-control-next-icon rounded bg-dark"
+        aria-hidden="true"
+      ></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
   <!--Introduction section-->
   <div #about id="about" class="container about-section section">
     <p class="introduction-title txt-lg txt-primary-dark">
@@ -27,10 +80,7 @@
     </div>
   </div>
 
-  <om-neon-underline
-    [middleColor]="'#93c7c4'"
-    [sideColor]="'#b0b0b0'"
-  ></om-neon-underline>
+  <hr class="container" />
 
   <!--References section-->
   <div #events id="events" class="container events-section section">
@@ -45,10 +95,7 @@
     </div>
   </div>
 
-  <om-neon-underline
-    [middleColor]="'#93c7c4'"
-    [sideColor]="'#b0b0b0'"
-  ></om-neon-underline>
+  <hr class="container" />
 
   <!--Contact section-->
   <div #contact id="contact" class="container contact-section section">

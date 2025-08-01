@@ -16,34 +16,27 @@ export class MaplibreService {
     showAccuracyCircle: true,
   });
   private userMarker: Marker | null = null;
-  //private lastPolygonUserIsIn: string | null = null;
 
-  private polygons: Array<{ name: string; feature: any }> = [];
+  private objectPolygons: Array<{ name: string; feature: any }> = [];
   private zones: Array<{ name: string; feature: any }> = [];
 
   public currentZone = new BehaviorSubject<null | string>(null);
 
-  public addGeoJSONLayer(
+  public addGeoJSONObjectsLayer(
     map: Map,
     responseData: any,
     layerName: string,
-    layerGroup: string,
     layerColor: string,
     sourceName: string,
     isLayerVisible?: boolean
   ) {
     /**
-     * add zones to zones, other polygons to polygons->
+     * add polygons to polygons->
      */
-    layerGroup !== 'zone'
-      ? this.polygons.push({
-          name: layerName,
-          feature: responseData.features[0],
-        })
-      : '';
-    layerGroup == 'zone'
-      ? this.zones.push({ name: layerName, feature: responseData.features[0] })
-      : '';
+    this.objectPolygons.push({
+      name: layerName,
+      feature: responseData.features[0],
+    });
 
     map.getLayer(layerName) ? map.removeLayer(layerName) : '';
     map.getLayer(`${layerName}-label`)
@@ -63,7 +56,7 @@ export class MaplibreService {
       type: 'fill',
       paint: {
         'fill-color': `${layerColor}`,
-        'fill-opacity': layerGroup === 'zone' ? 0.4 : 1,
+        'fill-opacity': 1,
         'fill-outline-color': `black`,
       },
     });
@@ -79,7 +72,6 @@ export class MaplibreService {
         'text-anchor': 'center',
       },
       paint: {
-        /*  'text-color': `${layerColor}`, */
         'text-color': 'black',
       },
     });
@@ -88,6 +80,45 @@ export class MaplibreService {
       map.setLayoutProperty(layerName, 'visibility', 'none');
       map.setLayoutProperty(`${layerName}-label`, 'visibility', 'none');
     }
+  }
+
+  public addGEOJSONZones(
+    map: Map,
+    responseData: any,
+    layerName: string,
+    layerColor: string,
+    sourceName: string
+  ) {
+    /**
+     * add polygons to polygons->
+     */
+    this.zones.push({
+      name: layerName,
+      feature: responseData.features[0],
+    });
+
+    map.getLayer(layerName) ? map.removeLayer(layerName) : '';
+    map.getLayer(`${layerName}-label`)
+      ? map.removeLayer(`${layerName}-label`)
+      : '';
+
+    map.getSource(sourceName) ? map.removeSource(sourceName) : '';
+
+    map.addSource(sourceName, {
+      type: 'geojson',
+      data: responseData,
+    });
+
+    map.addLayer({
+      id: layerName,
+      source: sourceName,
+      type: 'fill',
+      paint: {
+        'fill-color': `${layerColor}`,
+        'fill-opacity': 0.3,
+        'fill-outline-color': `black`,
+      },
+    });
   }
 
   public async addLocationMarkers(
@@ -182,38 +213,18 @@ export class MaplibreService {
         },
       };
 
-      //let foundPolygon = null;
       /**
-       * 1.Check, if user is inside any of the DB-stored polygons (zones)->
+       * Check, if user is inside any of the DB-stored polygons (zones)->
        */
       for (const polygon of this.zones) {
         const inside = booleanPointInPolygon(userLocation, polygon.feature);
         if (inside) {
-          //foundPolygon = polygon.name;
           this.currentZone.next(polygon.name);
 
           break;
         }
         this.currentZone.next(null);
       }
-
-      /**
-       * 2.If the currently entered polygon  !== to the previously entered polygon,
-       * alert is shown ->
-       */
-      /* if (foundPolygon && foundPolygon !== this.lastPolygonUserIsIn) {
-        this.currentZone.next(foundPolygon);
-        this.lastPolygonUserIsIn = foundPolygon;
-      } */
-
-      /**
-       * 3. If user is not in ANY of the DB-stored zones, the previously entered
-       * polygon is set to null ->
-       */
-      /* if (!foundPolygon && this.lastPolygonUserIsIn) {
-        this.lastPolygonUserIsIn = null; // reset if user leaves all polygons
-        this.currentZone.next(null);
-      } */
     });
   }
   public triggerGeolocate(map: Map) {
