@@ -11,6 +11,7 @@ import { FirebaseSourceService } from '../../@Service/firebase.source.service';
 import { Subscription } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'home-component',
@@ -18,7 +19,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   styleUrl: './home.component.scss',
   standalone: true,
   providers: [FirebaseSourceService],
-  imports: [MatProgressSpinnerModule],
+  imports: [MatProgressSpinnerModule, MatIconModule],
 })
 export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('nextCarouselButton') nextCarouselButton: ElementRef;
