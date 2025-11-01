@@ -33,18 +33,18 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     private firebaseService: FirebaseSourceService
   ) {}
   ngAfterViewInit(): void {
-    setTimeout(() => {
+    /* setTimeout(() => {
       this.nextCarouselButton.nativeElement.click();
-    }, 4000);
+    }, 4000); */
   }
 
   ngOnInit(): void {
-    this.isLoading = true;
+    //this.isLoading = true;
     this.activatedRoute.fragment.subscribe((fragment: string | null) => {
       if (fragment) this.jumpToSection(fragment);
     });
 
-    this.getImgUrls = this.firebaseService.getHomeImageURLs().subscribe({
+    /* this.getImgUrls = this.firebaseService.getHomeImageURLs().subscribe({
       next: (res: Array<string>) => {
         this.homeImageUrls = res;
         this.isLoading = false;
@@ -53,7 +53,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
         this.isLoading = false;
         return error;
       },
-    });
+    }); */
   }
 
   public jumpToSection(section: string): void {
